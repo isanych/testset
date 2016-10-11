@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		if (argc == 0)
+		if (argc == 1)
 		{
 			std::cout << "Usage: test [<cnt>...] <type> " << std::endl;
 			std::cout << " s - std::set" << std::endl;
@@ -100,6 +100,7 @@ int main(int argc, char** argv)
 			std::cout << " p - std::set" << std::endl;
 			std::cout << " s - std::set" << std::endl;
 			std::cout << " s - std::set" << std::endl;
+			return 0;
 		}
 		for (int i = 1; i < argc; ++i)
 		{
