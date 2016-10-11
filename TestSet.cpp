@@ -97,9 +97,8 @@ int main(int argc, char** argv)
 			std::cout << " s - std::set" << std::endl;
 			std::cout << " u - std::unordered_set" << std::endl;
 			std::cout << " b - btree::btree_set" << std::endl;
-			std::cout << " p - std::set" << std::endl;
-			std::cout << " s - std::set" << std::endl;
-			std::cout << " s - std::set" << std::endl;
+			std::cout << " p - google::sparse_hash_set" << std::endl;
+			std::cout << " d - google::dense_hash_set" << std::endl;
 			return 0;
 		}
 		for (int i = 1; i < argc; ++i)
