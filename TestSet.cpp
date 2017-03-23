@@ -146,7 +146,7 @@ void elapsed(const char* name, T end, T start)
 }
 
 template<typename T>
-void test(const char* name)
+void test(const std::string& name)
 {
   std::uniform_int_distribution<int64_t> rnd(std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max());
   T s;
@@ -190,25 +190,64 @@ void test(const char* name)
   std::cout << "hit count: " << cnt << std::endl;
 }
 
+struct cmp_by_length {
+  template<class T>
+  bool operator()(T const &a, T const &b) const {
+    return a.length() < b.length() || (a.length() == b.length() && a < b);
+  }
+};
+
+struct option : public std::set<std::string, cmp_by_length>
+{
+  using std::set<std::string, cmp_by_length>::set;
+  void help() const
+  {
+    auto first = true;
+    for (const auto& s : *this)
+    {
+      std::cout << (first ? " " : " | ") << s;
+      first = false;
+    }
+    std::cout << std::endl;
+  }
+  const std::string& name() const
+  {
+    return *rbegin();
+  }
+  bool contains(const std::string& s) const { return count(s) == 1; }
+};
+
 int main(int argc, char** argv)
 {
   try
   {
+    option _std = { "s", "set", "std::set" };
+    option unordered = { "u", "unordered", "unordered_set", "std::unordered_set" };
+    option unordered_pool = { "up", "unordered with pool", "unordered_set with pool", "std::unordered_set with pool" };
+    option btree = { "b", "btree", "btree_set", "btree::btree_set" };
+    option sparse = { "sp", "sparse", "sparse_hash_set", "google::sparse_hash_set" };
+    option sparse_pool = { "spp", "sparse with pool", "sparse_hash_set with pool", "google::sparse_hash_set with pool" };
+    option dense = { "d", "dense", "dense_hash_set", "google::dense_hash_set" };
+    option dense_pool = { "dp", "dense with pool", "dense_hash_set with pool", "google::dense_hash_set with pool" };
+    option closed = { "c", "closed", "closed_hash_set", "mct::closed_hash_set" };
+    option forward = { "f", "forward", "forward_hash_set", "mct::forward_hash_set" };
+    option huge_forward = { "hf", "huge_forward", "huge_forward_hash_set", "mct::huge_forward_hash_set" };
+    option huge_linked = { "hl", "huge_linked", "huge_linked_hash_set", "mct::huge_linked_hash_set" };
     if (argc == 1)
     {
       std::cout << "Usage: test [<cnt>] [hit <multiplier>] [miss <multiplier>] <type> " << std::endl;
-      std::cout << " s   - std::set" << std::endl;
-      std::cout << " u   - std::unordered_set" << std::endl;
-      std::cout << " up  - std::unordered_set with pool" << std::endl;
-      std::cout << " b   - btree::btree_set" << std::endl;
-      std::cout << " sp  - google::sparse_hash_set" << std::endl;
-      std::cout << " spp - google::sparse_hash_set with pool" << std::endl;
-      std::cout << " d   - google::dense_hash_set" << std::endl;
-      std::cout << " dp  - google::dense_hash_set with pool" << std::endl;
-      std::cout << " c   - mct::closed_hash_set" << std::endl;
-      std::cout << " f   - mct::forward_hash_set" << std::endl;
-      std::cout << " hf  - mct::huge_forward_hash_set" << std::endl;
-      std::cout << " hl  - mct::huge_linked_hash_set" << std::endl;
+      _std.help();
+      unordered.help();
+      unordered_pool.help();
+      btree.help();
+      sparse.help();
+      sparse_pool.help();
+      dense.help();
+      dense_pool.help();
+      closed.help();
+      forward.help();
+      huge_forward.help();
+      huge_linked.help();
       std::cout << " cnt - number of values in set, default: " << amount << std::endl;
       std::cout << " hit cnt  - number of hit steps, default: 0" << std::endl;
       std::cout << " miss cnt - number of miss steps, default: 0" << std::endl;
@@ -218,53 +257,53 @@ int main(int argc, char** argv)
     for (int i = 1; i < argc; ++i)
     {
       std::string s(argv[i]);
-      if (s == "s")
+      if (_std.contains(s))
       {
-        test<std::set<int64_t>>("set");
+        test<std::set<int64_t>>(_std.name());
       }
-      else if (s == "u")
+      else if (unordered.contains(s))
       {
-        test<std::unordered_set<int64_t>>("unordered_set");
+        test<std::unordered_set<int64_t>>(unordered.name());
       }
-      else if (s == "up")
+      else if (unordered_pool.contains(s))
       {
-        test<std::unordered_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>("unordered_set_pool");
+        test<std::unordered_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>(unordered_pool.name());
       }
-      else if (s == "b")
+      else if (btree.contains(s))
       {
-        test<btree::btree_set<int64_t>>("btree_set");
+        test<btree::btree_set<int64_t>>(btree.name());
       }
-      else if (s == "sp")
+      else if (sparse.contains(s))
       {
-        test<google::sparse_hash_set<int64_t>>("sparse");
+        test<google::sparse_hash_set<int64_t>>(sparse.name());
       }
-      else if (s == "spp")
+      else if (sparse_pool.contains(s))
       {
-        test<google::sparse_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>("sparse_pool");
+        test<google::sparse_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>(sparse_pool.name());
       }
-      else if (s == "d")
+      else if (dense.contains(s))
       {
-        test<google::dense_hash_set<int64_t>>("dense");
+        test<google::dense_hash_set<int64_t>>(dense.name());
       }
-      else if (s == "dp")
+      else if (dense_pool.contains(s))
       {
-        test<google::dense_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>("dense_pool");
+        test<google::dense_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>(dense_pool.name());
       }
-      else if (s == "c")
+      else if (closed.contains(s))
       {
-        test<mct::closed_hash_set<int64_t>>("closed");
+        test<mct::closed_hash_set<int64_t>>(closed.name());
       }
-      else if (s == "f")
+      else if (forward.contains(s))
       {
-        test<mct::forward_hash_set<int64_t>>("forward");
+        test<mct::forward_hash_set<int64_t>>(forward.name());
       }
-      else if (s == "hf")
+      else if (huge_forward.contains(s))
       {
-        test<mct::huge_forward_hash_set<int64_t>>("huge_forward");
+        test<mct::huge_forward_hash_set<int64_t>>(huge_forward.name());
       }
-      else if (s == "hl")
+      else if (huge_linked.contains(s))
       {
-        test<mct::huge_linked_hash_set<int64_t>>("huge_linked");
+        test<mct::huge_linked_hash_set<int64_t>>(huge_linked.name());
       }
       else if (s == "hit")
       {
