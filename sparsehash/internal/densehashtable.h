@@ -623,9 +623,9 @@ class dense_hashtable {
   }
 
   // We require table be not-NULL and empty before calling this.
-  void resize_table(size_type /*old_size*/, size_type new_size,
+  void resize_table(size_type old_size, size_type new_size,
                     base::true_type) {
-    table = val_info.realloc_or_die(table, new_size);
+    table = val_info.realloc_or_die(table, new_size, old_size);
   }
 
   void resize_table(size_type old_size, size_type new_size, base::false_type) {
@@ -779,8 +779,7 @@ class dense_hashtable {
       destroy_buckets(0, num_buckets);
       if (new_num_buckets != num_buckets) {   // resize, if necessary
         typedef base::integral_constant<bool,
-            base::is_same<value_alloc_type,
-                          libc_allocator_with_realloc<value_type> >::value>
+            has_reallocate_method<value_alloc_type>::value>
             realloc_ok;
         resize_table(num_buckets, new_num_buckets, realloc_ok());
       }
@@ -1166,51 +1165,7 @@ class dense_hashtable {
     return true;
   }
 
- private:
-  template <class A>
-  class alloc_impl : public A {
-   public:
-    typedef typename A::pointer pointer;
-    typedef typename A::size_type size_type;
-
-    // Convert a normal allocator to one that has realloc_or_die()
-    alloc_impl(const A& a) : A(a) { }
-
-    // realloc_or_die should only be used when using the default
-    // allocator (libc_allocator_with_realloc).
-    pointer realloc_or_die(pointer /*ptr*/, size_type /*n*/) {
-      fprintf(stderr, "realloc_or_die is only supported for "
-                      "libc_allocator_with_realloc\n");
-      exit(1);
-      return NULL;
-    }
-  };
-
-  // A template specialization of alloc_impl for
-  // libc_allocator_with_realloc that can handle realloc_or_die.
-  template <class A>
-  class alloc_impl<libc_allocator_with_realloc<A> >
-      : public libc_allocator_with_realloc<A> {
-   public:
-    typedef typename libc_allocator_with_realloc<A>::pointer pointer;
-    typedef typename libc_allocator_with_realloc<A>::size_type size_type;
-
-    alloc_impl(const libc_allocator_with_realloc<A>& a)
-        : libc_allocator_with_realloc<A>(a) { }
-
-    pointer realloc_or_die(pointer ptr, size_type n) {
-      pointer retval = this->reallocate(ptr, n);
-      if (retval == NULL) {
-        fprintf(stderr,
-                "sparsehash: FATAL ERROR: failed to reallocate "
-                "%lu elements for ptr %p",
-                static_cast<unsigned long>(n), static_cast<void*>(ptr));
-        exit(1);
-      }
-      return retval;
-    }
-  };
-
+  private:
   // Package allocator with emptyval to eliminate memory needed for
   // the zero-size allocator.
   // If new fields are added to this class, we should add them to

@@ -17,88 +17,147 @@ const auto amount = 10000000;
 #endif
 const auto mem_offset = sizeof(size_t);
 
-int64_t mem_counter = 0;
-int64_t new_counter = 0;
-int64_t del_counter = 0;
-
-int64_t reset()
+struct Counter
 {
-  auto ret = mem_counter;
-  mem_counter = 0;
-  new_counter = 0;
-  del_counter = 0;
-  return ret;
-}
-
-#ifdef WRAP_ALLOC
-void* operator new(size_t sz) {
-  mem_counter += sz;
-  ++new_counter;
-  auto ret = static_cast<size_t*>(malloc(sz + mem_offset));
-  *ret = sz;
-  return ret + 1;
-}
-
-void operator delete(void* ptr) noexcept
-{
-  auto sptr = static_cast<size_t *>(ptr) - 1;
-  mem_counter -= *sptr;
-  ++del_counter;
-  free(sptr);
-}
-#endif
-
-size_t populate_count = amount;
-size_t hit_count = 0;
-size_t miss_count = 0;
-
-template<typename T>
-void init_set(T& s){}
-
-template<>
-void init_set(google::dense_hash_set<int64_t>& s)
-{
-  s.set_empty_key(0);
-}
+  int64_t bytes = 0;
+  int64_t times = 0;
+  void add(int64_t bytes)
+  {
+    ++times;
+    this->bytes += bytes;
+  }
+};
 
 struct Pool
 {
-  const size_t pool_size = 16300;
-  Pool() noexcept : _next(), _end() {}
-  char* grow(size_t n) {
-    _pools.emplace_back(static_cast<char*>(operator new(n)));
+  size_t pool_chunk_size = 16300;
+  bool is_pool = false;
+
+  char* grow(size_t sz) {
+    _pools.emplace_back(static_cast<char*>(_allocate(sz)));
     return _pools.back().get();
-  }
-  void* allocate(size_t n) {
-    if (n == 0)
-    {
-      return nullptr;
-    }
-    if (static_cast<size_t>(_end - _next) < n) {
-      if (pool_size <= n) {
-        return grow(n);
-      }
-      _next = grow(pool_size);
-      _end = _next + pool_size;
-    }
-    auto ret = _next;
-    _next += n;
-    return ret;
   }
   void clear()
   {
     _next = _end = nullptr;
     _pools.clear();
   }
+  void* allocate(size_t sz) {
+    if (sz == 0)
+    {
+      return nullptr;
+    }
+#ifdef USE_POOL
+    if (static_cast<size_t>(_end - _next) < sz) {
+      if (pool_chunk_size <= sz) {
+        return grow(sz);
+      }
+      _next = grow(pool_chunk_size);
+      _end = _next + pool_chunk_size;
+    }
+    auto ret = _next;
+    _next += sz;
+    return ret;
+#else
+    return _allocate(sz);
+#endif
+  }
+  void deallocate(void* p, size_t sz) {
+    _free.add(sz);
+    free(p);
+  }
+  void* reallocate(void* p, size_t new_sz, size_t old_sz) {
+    if (new_sz == old_sz)
+    {
+      return p;
+    }
+    if (new_sz > old_sz)
+    {
+      _grow.add(new_sz - old_sz);
+#ifdef USE_POOL
+      auto new_p = allocate(new_sz);
+      memmove(new_p, p, std::min(old_sz, new_sz));
+      deallocate(p, old_sz);
+      return new_p;
+#endif
+    }
+    else
+    {
+      _shrink.add(old_sz - new_sz);
+#ifdef USE_POOL
+      return p;
+#endif
+    }
+#ifndef USE_POOL
+    return realloc(p, new_sz);
+#endif
+  }
+
+  static void report(const char* name, size_t count, size_t sz)
+  {
+    if (count == 0 && sz == 0)
+    {
+      return;
+    }
+    std::cout << name << ": ";
+    if (count != 0)
+    {
+      std::cout << count << " times ";
+    }
+    std::cout << sz << " bytes ";
+    std::cout << sz / (1024 * 1024) << " MB";
+    if (count != 0)
+    {
+      std::cout << " average " << sz / count << " bytes";
+    }
+    std::cout << std::endl;
+  }
+
+  static void report(const char* name, Counter c) { report(name, c.times, c.bytes); }
+
+  void report(size_t data_size)
+  {
+    auto used = _alloc.bytes - _free.bytes;
+    report("Data size", 0, data_size);
+    report("Used", 0, used);
+    report("Alloc", _alloc);
+    report("Free", _free);
+    report("Grow", _grow);
+    report("Shrink", _shrink);
+    report("New", _new);
+    report("Delete", _delete);
+    if (used > 0)
+    {
+      std::cout << "Ratio: " << std::fixed << std::setprecision(3) << static_cast<double>(used) / data_size << std::endl;
+    }
+  }
 private:
+  void* _allocate(size_t sz) {
+    _alloc.add(sz);
+    return malloc(sz);
+  }
+  void _deallocate(void* p, size_t sz) {
+    _free.add(sz);
+    free(p);
+  }
+
   std::deque<std::unique_ptr<char>> _pools;
-  char* _next;
-  char* _end;
+  char* _next = nullptr;
+  char* _end = nullptr;
+  Counter _alloc;
+  Counter _free;
+  Counter _grow;
+  Counter _shrink;
+  Counter _new;
+  Counter _delete;
 };
 
-template<typename T>
-struct PoolAllocator
-{
+Pool pool;
+
+#ifdef WRAP_ALLOC
+template<class T>
+class Reallocator : google::libc_allocator_with_realloc<T> {
+public:
   using value_type = T;
   using size_type = size_t;
   using pointer = value_type*;
@@ -108,62 +167,104 @@ struct PoolAllocator
   using difference_type = typename std::pointer_traits<pointer>::difference_type;
   size_type max_size() const { return std::numeric_limits<size_type>::max(); }
 
-  PoolAllocator() noexcept {}
-  PoolAllocator(const PoolAllocator<value_type>&) noexcept {}
+  Reallocator() noexcept {}
+  Reallocator(const Reallocator<value_type>&) noexcept {}
   template<typename U>
-  PoolAllocator(const PoolAllocator<U>&) noexcept {}
+  Reallocator(const Reallocator<U>&) noexcept {}
 
-  pointer allocate(size_t size)
-  {
-    return static_cast<pointer>(_pool.allocate(size * sizeof(value_type)));
+  pointer allocate(size_type n) {
+    return static_cast<pointer>(pool.allocate(n * sizeof(value_type)));
   }
+  void deallocate(pointer p, size_type n) {
+    pool.deallocate(p, n);
+  }
+  pointer reallocate(pointer p, size_type new_n, size_type old_n) {
+    return static_cast<pointer>(pool.reallocate(p, new_n * sizeof(value_type), old_n * sizeof(value_type)));
+  }
+  pointer address(reference r) const { return &r; }
+  const_pointer address(const_reference r) const { return &r; }
+  void construct(pointer p, const value_type& val) {
+    new(p) value_type(val);
+  }
+  void destroy(pointer p) { p->~value_type(); }
 
-  void deallocate(pointer , size_t) {}
-
-  template<typename U>
-  struct rebind
-  {
-    typedef PoolAllocator<U> other;
+  template<class U>
+  struct rebind {
+    typedef Reallocator<U> other;
   };
-
-private:
-  static Pool _pool;
 };
 
+template<>
+class Reallocator<void> {
+public:
+  typedef void value_type;
+  typedef size_t size_type;
+  typedef ptrdiff_t difference_type;
+  typedef void* pointer;
+  typedef const void* const_pointer;
+
+  template<class U>
+  struct rebind {
+    typedef Reallocator<U> other;
+  };
+};
+
+template<class T>
+constexpr bool operator==(const Reallocator<T>&, const Reallocator<T>&) noexcept { return true; }
+
+template<class T>
+constexpr bool operator!=(const Reallocator<T>&, const Reallocator<T>&) noexcept { return false; }
+
+template <class T>
+using PoolAllocator = Reallocator<T>;
+
+#else
+template <class T>
+using Reallocator = google::libc_allocator_with_realloc<T>;
+template <class T>
+using PoolAllocator = std::allocator<T>;
+#endif
+
+
+typedef google::dense_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, Reallocator<int64_t>> Dense;
+
+size_t populate_count = amount;
+size_t hit_count = 0;
+size_t miss_count = 0;
+
 template<typename T>
-Pool PoolAllocator<T>::_pool;
+void init_set(T& s){}
 
-template<typename T, typename U>
-constexpr bool operator==(const PoolAllocator<T> &, const PoolAllocator<U> &) noexcept { return true; }
-
-template<typename T, typename U>
-constexpr bool operator!=(const PoolAllocator<T> &, const PoolAllocator<U> &) noexcept { return false; }
+template<>
+void init_set(Dense& s)
+{
+  s.set_empty_key(0);
+}
 
 template<typename T>
 void elapsed(const char* name, T end, T start)
 {
-  std::cout << name << ", sec: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << std::endl;
+  std::cout << name << ", sec: " << std::fixed << std::setprecision(2) <<
+    std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << std::endl;
 }
 
+std::string test_name;
+
 template<typename T>
-void test(const std::string& name)
+void test()
 {
+  std::cout << test_name << std::endl;
   std::uniform_int_distribution<int64_t> rnd(std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max());
   T s;
   init_set(s);
   std::default_random_engine generator(5489);
-  reset();
   auto population_start = std::chrono::high_resolution_clock::now();
   for (auto n = 0; n < populate_count; ++n)
   {
     s.insert(rnd(generator));
   }
   auto population_end = std::chrono::high_resolution_clock::now();
-  auto nc = new_counter;
-  auto dc = del_counter;
-  auto memory_size = reset();
-  auto data_size = s.size() * sizeof(int64_t);
-  std::cout << name << ": " << data_size / 1024 << " KB of data " << memory_size / 1024 << " KB allocated, ratio " << std::setprecision(2) << static_cast<double>(memory_size) / data_size << " new cnt: " << nc << " del cnt: "<< dc << std::endl;
+  pool.report(s.size() * sizeof(int64_t));
   elapsed("population", population_end, population_start);
   size_t cnt = 0;
   auto hit_start = std::chrono::high_resolution_clock::now();
@@ -214,7 +315,15 @@ struct option : public std::set<std::string, cmp_by_length>
   {
     return *rbegin();
   }
-  bool contains(const std::string& s) const { return count(s) == 1; }
+  bool contains(const std::string& s) const
+  {
+    auto ret = count(s) == 1;
+    if (ret)
+    {
+      test_name = name();
+    }
+    return ret;
+  }
 };
 
 int main(int argc, char** argv)
@@ -223,12 +332,9 @@ int main(int argc, char** argv)
   {
     option _std = { "s", "set", "std::set" };
     option unordered = { "u", "unordered", "unordered_set", "std::unordered_set" };
-    option unordered_pool = { "up", "unordered with pool", "unordered_set with pool", "std::unordered_set with pool" };
     option btree = { "b", "btree", "btree_set", "btree::btree_set" };
     option sparse = { "sp", "sparse", "sparse_hash_set", "google::sparse_hash_set" };
-    option sparse_pool = { "spp", "sparse with pool", "sparse_hash_set with pool", "google::sparse_hash_set with pool" };
     option dense = { "d", "dense", "dense_hash_set", "google::dense_hash_set" };
-    option dense_pool = { "dp", "dense with pool", "dense_hash_set with pool", "google::dense_hash_set with pool" };
     option closed = { "c", "closed", "closed_hash_set", "mct::closed_hash_set" };
     option forward = { "f", "forward", "forward_hash_set", "mct::forward_hash_set" };
     option huge_forward = { "hf", "huge_forward", "huge_forward_hash_set", "mct::huge_forward_hash_set" };
@@ -238,12 +344,9 @@ int main(int argc, char** argv)
       std::cout << "Usage: test [<cnt>] [hit <multiplier>] [miss <multiplier>] <type> " << std::endl;
       _std.help();
       unordered.help();
-      unordered_pool.help();
       btree.help();
       sparse.help();
-      sparse_pool.help();
       dense.help();
-      dense_pool.help();
       closed.help();
       forward.help();
       huge_forward.help();
@@ -259,51 +362,39 @@ int main(int argc, char** argv)
       std::string s(argv[i]);
       if (_std.contains(s))
       {
-        test<std::set<int64_t>>(_std.name());
+        test<std::set<int64_t, std::less<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (unordered.contains(s))
       {
-        test<std::unordered_set<int64_t>>(unordered.name());
-      }
-      else if (unordered_pool.contains(s))
-      {
-        test<std::unordered_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>(unordered_pool.name());
+        test<std::unordered_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (btree.contains(s))
       {
-        test<btree::btree_set<int64_t>>(btree.name());
+        test<btree::btree_set<int64_t, std::less<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (sparse.contains(s))
       {
-        test<google::sparse_hash_set<int64_t>>(sparse.name());
-      }
-      else if (sparse_pool.contains(s))
-      {
-        test<google::sparse_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>(sparse_pool.name());
+        test<google::sparse_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, Reallocator<int64_t>>>();
       }
       else if (dense.contains(s))
       {
-        test<google::dense_hash_set<int64_t>>(dense.name());
-      }
-      else if (dense_pool.contains(s))
-      {
-        test<google::dense_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>(dense_pool.name());
+        test<Dense>();
       }
       else if (closed.contains(s))
       {
-        test<mct::closed_hash_set<int64_t>>(closed.name());
+        test<mct::closed_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (forward.contains(s))
       {
-        test<mct::forward_hash_set<int64_t>>(forward.name());
+        test<mct::forward_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (huge_forward.contains(s))
       {
-        test<mct::huge_forward_hash_set<int64_t>>(huge_forward.name());
+        test<mct::huge_forward_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (huge_linked.contains(s))
       {
-        test<mct::huge_linked_hash_set<int64_t>>(huge_linked.name());
+        test<mct::huge_linked_hash_set<int64_t, std::hash<int64_t>, std::equal_to<int64_t>, PoolAllocator<int64_t>>>();
       }
       else if (s == "hit")
       {

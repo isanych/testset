@@ -418,13 +418,16 @@ namespace mct
 
         if (that->_next)
           {
-            this->_next  = ((that - bucket_pointer (static_cast <bucket_type*> (this)))
-                            + that->_next);
+            auto new_val = that - bucket_pointer(static_cast <bucket_type*> (this)) + that->_next;
+            assert(new_val >= std::numeric_limits<next_field_type>::min() && new_val <= std::numeric_limits<next_field_type>::max());
+            this->_next  = static_cast<next_field_type>(new_val);
             that->_next -= this->_next;
           }
         else
           {
-            that->_next  = (bucket_pointer (static_cast <bucket_type*> (this)) - that);
+            auto new_val = bucket_pointer(static_cast <bucket_type*> (this)) - that;
+            assert(new_val >= std::numeric_limits<next_field_type>::min() && new_val <= std::numeric_limits<next_field_type>::max());
+            that->_next  = static_cast<next_field_type>(new_val);;
             this->_next  = 0;
           }
       }

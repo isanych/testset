@@ -1,0 +1,531 @@
+19/04/2017 14:47:45.69 Start ============================================================
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 unordered 
+std::unordered_set
+Data size: 160000000 bytes 152 MB
+population, sec: 11.37
+hit, sec: 4.99
+miss, sec: 4.59
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 23.88
+Kernel time    : 0.41 (1.7%)
+User time      : 23.47 (98.3%)
+page fault #   : 422161
+Working set    : 1157576 KB
+Paged pool     : 84 KB
+Non-paged pool : 12 KB
+Page file size : 1351068 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 btree 
+btree::btree_set
+Data size: 160000000 bytes 152 MB
+population, sec: 9.02
+hit, sec: 8.25
+miss, sec: 8.60
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 26.06
+Kernel time    : 0.09 (0.4%)
+User time      : 25.92 (99.5%)
+page fault #   : 55743
+Working set    : 221472 KB
+Paged pool     : 84 KB
+Non-paged pool : 8 KB
+Page file size : 225760 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 sparse 
+google::sparse_hash_set
+Data size: 160000000 bytes 152 MB
+population, sec: 14.08
+hit, sec: 5.26
+miss, sec: 4.49
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 24.00
+Kernel time    : 0.13 (0.5%)
+User time      : 23.81 (99.2%)
+page fault #   : 116257
+Working set    : 255360 KB
+Paged pool     : 84 KB
+Non-paged pool : 8 KB
+Page file size : 260248 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 dense 
+google::dense_hash_set
+Data size: 160000000 bytes 152 MB
+population, sec: 3.85
+hit, sec: 2.89
+miss, sec: 3.02
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 9.81
+Kernel time    : 0.30 (3.0%)
+User time      : 9.50 (96.9%)
+page fault #   : 263797
+Working set    : 791304 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 closed 
+mct::closed_hash_set
+Data size: 160000000 bytes 152 MB
+population, sec: 3.92
+hit, sec: 3.18
+miss, sec: 3.72
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 10.87
+Kernel time    : 0.23 (2.2%)
+User time      : 10.61 (97.6%)
+page fault #   : 263797
+Working set    : 791288 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 forward 
+mct::forward_hash_set
+Data size: 160000000 bytes 152 MB
+population, sec: 7.25
+hit, sec: 3.10
+miss, sec: 3.71
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 14.11
+Kernel time    : 0.31 (2.2%)
+User time      : 13.73 (97.3%)
+page fault #   : 263793
+Working set    : 791292 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790220 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 huge_forward 
+mct::huge_forward_hash_set
+Data size: 160000000 bytes 152 MB
+population, sec: 7.68
+hit, sec: 3.44
+miss, sec: 3.87
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 15.03
+Kernel time    : 0.31 (2.1%)
+User time      : 14.67 (97.6%)
+page fault #   : 263798
+Working set    : 791292 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 huge_linked 
+mct::huge_linked_hash_set
+Data size: 160000000 bytes 152 MB
+population, sec: 8.06
+hit, sec: 3.54
+miss, sec: 4.20
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 15.86
+Kernel time    : 0.41 (2.6%)
+User time      : 15.42 (97.2%)
+page fault #   : 395121
+Working set    : 1185024 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 1184728 KB
+
+C:\w\TestSet>TimeMem TestSet 20000000 hit 1 miss 1 set 
+std::set
+Data size: 160000000 bytes 152 MB
+population, sec: 31.74
+hit, sec: 31.91
+miss, sec: 34.41
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 105.39
+Kernel time    : 0.45 (0.4%)
+User time      : 104.81 (99.5%)
+page fault #   : 238630
+Working set    : 946784 KB
+Paged pool     : 84 KB
+Non-paged pool : 14 KB
+Page file size : 1004436 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 unordered 
+std::unordered_set
+Data size: 160000000 bytes 152 MB
+Used: 1486626824 bytes 1417 MB
+Alloc: 20000020 times 1553734808 bytes 1481 MB average 77 bytes
+Free: 18 times 67107984 bytes 63 MB average 3728221 bytes
+Ratio: 9.291
+population, sec: 11.02
+hit, sec: 4.79
+miss, sec: 4.64
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 23.40
+Kernel time    : 0.42 (1.8%)
+User time      : 22.91 (97.9%)
+page fault #   : 422169
+Working set    : 1157612 KB
+Paged pool     : 84 KB
+Non-paged pool : 12 KB
+Page file size : 1351128 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 btree 
+btree::btree_set
+Data size: 160000000 bytes 152 MB
+Used: 209725832 bytes 200 MB
+Alloc: 790121 times 209726160 bytes 200 MB average 265 bytes
+Free: 5 times 328 bytes 0 MB average 65 bytes
+Ratio: 1.311
+population, sec: 9.06
+hit, sec: 8.39
+miss, sec: 8.36
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 25.99
+Kernel time    : 0.11 (0.4%)
+User time      : 25.86 (99.5%)
+page fault #   : 55749
+Working set    : 221484 KB
+Paged pool     : 84 KB
+Non-paged pool : 8 KB
+Page file size : 225772 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 sparse 
+google::sparse_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 18446744073704378821 bytes 17592186044411 MB
+Alloc: 21 times 22369776 bytes 21 MB average 1065227 bytes
+Free: 699080 times 27542571 bytes 26 MB average 39 bytes
+Grow: 46843511 times 374748088 bytes 357 MB average 8 bytes
+population, sec: 14.09
+hit, sec: 5.76
+miss, sec: 4.60
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 24.60
+Kernel time    : 0.09 (0.4%)
+User time      : 24.39 (99.2%)
+page fault #   : 113445
+Working set    : 254372 KB
+Paged pool     : 84 KB
+Non-paged pool : 8 KB
+Page file size : 259936 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 dense 
+google::dense_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1006632736 bytes 959 MB
+Alloc: 22 times 1073741568 bytes 1023 MB average 48806434 bytes
+Free: 21 times 67108832 bytes 63 MB average 3195658 bytes
+Ratio: 6.291
+population, sec: 4.00
+hit, sec: 2.98
+miss, sec: 3.17
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 10.20
+Kernel time    : 0.31 (3.1%)
+User time      : 9.84 (96.5%)
+page fault #   : 263799
+Working set    : 791304 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790224 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 closed 
+mct::closed_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1040187152 bytes 991 MB
+Alloc: 22 times 1073741568 bytes 1023 MB average 48806434 bytes
+Free: 21 times 33554416 bytes 31 MB average 1597829 bytes
+Ratio: 6.501
+population, sec: 3.89
+hit, sec: 3.25
+miss, sec: 3.73
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 10.93
+Kernel time    : 0.22 (2.0%)
+User time      : 10.70 (98.0%)
+page fault #   : 263801
+Working set    : 791304 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 forward 
+mct::forward_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1040187483 bytes 992 MB
+Alloc: 22 times 1073741920 bytes 1024 MB average 48806450 bytes
+Free: 21 times 33554437 bytes 32 MB average 1597830 bytes
+Ratio: 6.501
+population, sec: 7.46
+hit, sec: 3.26
+miss, sec: 3.80
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 14.57
+Kernel time    : 0.27 (1.8%)
+User time      : 14.30 (98.1%)
+page fault #   : 263796
+Working set    : 791288 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790228 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 huge_forward 
+mct::huge_forward_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1040187483 bytes 992 MB
+Alloc: 22 times 1073741920 bytes 1024 MB average 48806450 bytes
+Free: 21 times 33554437 bytes 32 MB average 1597830 bytes
+Ratio: 6.501
+population, sec: 7.50
+hit, sec: 3.17
+miss, sec: 3.71
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 14.42
+Kernel time    : 0.22 (1.5%)
+User time      : 14.13 (97.9%)
+page fault #   : 263801
+Working set    : 791292 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790240 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 huge_linked 
+mct::huge_linked_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1577058443 bytes 1504 MB
+Alloc: 22 times 1610612880 bytes 1536 MB average 73209676 bytes
+Free: 21 times 33554437 bytes 32 MB average 1597830 bytes
+Ratio: 9.857
+population, sec: 8.27
+hit, sec: 3.48
+miss, sec: 4.13
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 15.95
+Kernel time    : 0.48 (3.0%)
+User time      : 15.41 (96.6%)
+page fault #   : 395124
+Working set    : 1185032 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 1184724 KB
+
+C:\w\TestSet>TimeMem TestSetAlloc 20000000 hit 1 miss 1 set 
+std::set
+Data size: 160000000 bytes 152 MB
+Used: 800000040 bytes 762 MB
+Alloc: 20000001 times 800000040 bytes 762 MB average 40 bytes
+Ratio: 5.000
+population, sec: 31.58
+hit, sec: 31.61
+miss, sec: 34.73
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 105.36
+Kernel time    : 0.38 (0.4%)
+User time      : 104.98 (99.6%)
+page fault #   : 238630
+Working set    : 946784 KB
+Paged pool     : 84 KB
+Non-paged pool : 14 KB
+Page file size : 1004440 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 unordered 
+std::unordered_set
+Data size: 160000000 bytes 152 MB
+Used: 1486626824 bytes 1417 MB
+Alloc: 20000020 times 1553734808 bytes 1481 MB average 77 bytes
+Free: 18 times 67107984 bytes 63 MB average 3728221 bytes
+Ratio: 9.291
+population, sec: 11.14
+hit, sec: 4.81
+miss, sec: 4.73
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 23.65
+Kernel time    : 0.44 (1.9%)
+User time      : 23.14 (97.9%)
+page fault #   : 422171
+Working set    : 1157600 KB
+Paged pool     : 84 KB
+Non-paged pool : 12 KB
+Page file size : 1351140 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 btree 
+btree::btree_set
+Data size: 160000000 bytes 152 MB
+Used: 209725832 bytes 200 MB
+Alloc: 790121 times 209726160 bytes 200 MB average 265 bytes
+Free: 5 times 328 bytes 0 MB average 65 bytes
+Ratio: 1.311
+population, sec: 9.04
+hit, sec: 8.33
+miss, sec: 8.29
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 25.82
+Kernel time    : 0.08 (0.3%)
+User time      : 25.66 (99.4%)
+page fault #   : 55750
+Working set    : 221500 KB
+Paged pool     : 84 KB
+Non-paged pool : 8 KB
+Page file size : 225768 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 sparse 
+google::sparse_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 18446744073704378821 bytes 17592186044411 MB
+Alloc: 21 times 22369776 bytes 21 MB average 1065227 bytes
+Free: 699080 times 27542571 bytes 26 MB average 39 bytes
+Grow: 46843511 times 374748088 bytes 357 MB average 8 bytes
+population, sec: 13.89
+hit, sec: 5.26
+miss, sec: 4.46
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 23.77
+Kernel time    : 0.11 (0.5%)
+User time      : 23.58 (99.2%)
+page fault #   : 113717
+Working set    : 253160 KB
+Paged pool     : 84 KB
+Non-paged pool : 8 KB
+Page file size : 258064 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 dense 
+google::dense_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1006632736 bytes 959 MB
+Alloc: 22 times 1073741568 bytes 1023 MB average 48806434 bytes
+Free: 21 times 67108832 bytes 63 MB average 3195658 bytes
+Ratio: 6.291
+population, sec: 3.90
+hit, sec: 2.92
+miss, sec: 3.05
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 9.92
+Kernel time    : 0.25 (2.5%)
+User time      : 9.64 (97.2%)
+page fault #   : 263801
+Working set    : 791304 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 closed 
+mct::closed_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1040187152 bytes 991 MB
+Alloc: 22 times 1073741568 bytes 1023 MB average 48806434 bytes
+Free: 21 times 33554416 bytes 31 MB average 1597829 bytes
+Ratio: 6.501
+population, sec: 4.26
+hit, sec: 3.28
+miss, sec: 3.83
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 11.44
+Kernel time    : 0.27 (2.3%)
+User time      : 11.11 (97.1%)
+page fault #   : 263796
+Working set    : 791304 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790224 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 forward 
+mct::forward_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1040187483 bytes 992 MB
+Alloc: 22 times 1073741920 bytes 1024 MB average 48806450 bytes
+Free: 21 times 33554437 bytes 32 MB average 1597830 bytes
+Ratio: 6.501
+population, sec: 7.19
+hit, sec: 3.16
+miss, sec: 3.72
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 14.11
+Kernel time    : 0.27 (1.9%)
+User time      : 13.83 (98.0%)
+page fault #   : 263797
+Working set    : 791168 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 huge_forward 
+mct::huge_forward_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1040187483 bytes 992 MB
+Alloc: 22 times 1073741920 bytes 1024 MB average 48806450 bytes
+Free: 21 times 33554437 bytes 32 MB average 1597830 bytes
+Ratio: 6.501
+population, sec: 7.20
+hit, sec: 3.57
+miss, sec: 3.94
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 14.75
+Kernel time    : 0.28 (1.9%)
+User time      : 14.39 (97.6%)
+page fault #   : 263793
+Working set    : 791284 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 790232 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 huge_linked 
+mct::huge_linked_hash_set
+Data size: 160000000 bytes 152 MB
+Used: 1577058443 bytes 1504 MB
+Alloc: 22 times 1610612880 bytes 1536 MB average 73209676 bytes
+Free: 21 times 33554437 bytes 32 MB average 1597830 bytes
+Ratio: 9.857
+population, sec: 8.75
+hit, sec: 3.65
+miss, sec: 4.69
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 17.16
+Kernel time    : 0.38 (2.2%)
+User time      : 16.72 (97.4%)
+page fault #   : 395127
+Working set    : 1185036 KB
+Paged pool     : 84 KB
+Non-paged pool : 6 KB
+Page file size : 1184728 KB
+
+C:\w\TestSet>TimeMem TestSetPool 20000000 hit 1 miss 1 set 
+std::set
+Data size: 160000000 bytes 152 MB
+Used: 800000040 bytes 762 MB
+Alloc: 20000001 times 800000040 bytes 762 MB average 40 bytes
+Ratio: 5.000
+population, sec: 33.07
+hit, sec: 32.95
+miss, sec: 34.81
+hit count: 20000000
+Exit code      : 0
+Elapsed time   : 108.24
+Kernel time    : 0.42 (0.4%)
+User time      : 107.63 (99.4%)
+page fault #   : 238634
+Working set    : 946784 KB
+Paged pool     : 84 KB
+Non-paged pool : 14 KB
+Page file size : 1004448 KB
+19/04/2017 15:00:05.85 Stop =============================================================

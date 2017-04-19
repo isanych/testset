@@ -19,4 +19,87 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mct\impl\closed-hash-table.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\impl\optimization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\impl\serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\impl\utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\closed-hash-map.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\closed-hash-set.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\hash-map.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\hash-map-serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\hash-set.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\hash-set-serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mct\intrusiveness.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\internal\densehashtable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\internal\hashtable-common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\internal\libc_allocator_with_realloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\internal\sparseconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\internal\sparsehashtable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\template_util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\type_traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="btree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="btree_container.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="btree_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\dense_hash_map">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\dense_hash_set">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\sparse_hash_map">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\sparse_hash_set">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\sparsetable">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

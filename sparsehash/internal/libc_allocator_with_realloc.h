@@ -64,7 +64,7 @@ class libc_allocator_with_realloc {
   void deallocate(pointer p, size_type) {
     free(p);
   }
-  pointer reallocate(pointer p, size_type n) {
+  pointer reallocate(pointer p, size_type n, size_type) {
     return static_cast<pointer>(realloc(p, n * sizeof(value_type)));
   }
 
@@ -113,6 +113,44 @@ inline bool operator!=(const libc_allocator_with_realloc<T>&,
                        const libc_allocator_with_realloc<T>&) {
   return false;
 }
+
+template<typename T>
+struct has_reallocate_method
+{
+  typedef std::true_type yes;
+  typedef std::false_type no;
+
+private:
+  template<typename U> static auto test(typename T::value_type* p, size_t new_n, size_t old_n) ->
+    decltype(std::declval<U>().reallocate(p, new_n, old_n) == p, yes());
+  template<typename> static no test(...);
+
+public:
+  typedef std::is_same<decltype(test<T>(nullptr, 0, 0)), yes> value_type;
+  static constexpr bool value = value_type::value;
+};
+
+template <class A>
+class alloc_impl : public A {
+public:
+  typedef typename A::pointer pointer;
+  typedef typename A::size_type size_type;
+
+  // Convert a normal allocator to one that has realloc_or_die()
+  alloc_impl(const A& a) : A(a) { }
+
+  pointer realloc_or_die(pointer ptr, size_type n, size_type old_n) {
+    pointer retval = this->reallocate(ptr, n, old_n);
+    if (retval == NULL) {
+      fprintf(stderr,
+        "sparsehash: FATAL ERROR: failed to reallocate "
+        "%lu elements for ptr %p",
+        static_cast<unsigned long>(n), static_cast<void*>(ptr));
+      exit(1);
+    }
+    return retval;
+  }
+};
 
 _END_GOOGLE_NAMESPACE_
 

@@ -1084,7 +1084,7 @@ class sparsegroup {
   // pretend that move(x, y) is equivalent to "x.~T(); new(x) T(y);"
   // which is pretty much correct, if a bit conservative.)
   void set_aux(size_type offset, base::true_type) {
-    group = settings.realloc_or_die(group, settings.num_buckets+1);
+    group = settings.realloc_or_die(group, settings.num_buckets+1, settings.num_buckets);
     // This is equivalent to memmove(), but faster on my Intel P4,
     // at least with gcc4.1 -O2 / glibc 2.3.6.
     for (size_type i = settings.num_buckets; i > offset; --i)
@@ -1116,9 +1116,7 @@ class sparsegroup {
       typedef base::integral_constant<bool,
           (base::has_trivial_copy<value_type>::value &&
            base::has_trivial_destructor<value_type>::value &&
-           base::is_same<
-               allocator_type,
-               libc_allocator_with_realloc<value_type> >::value)>
+           has_reallocate_method<value_alloc_type>::value)>
           realloc_and_memmove_ok; // we pretend mv(x,y) == "x.~T(); new(x) T(y)"
       set_aux(offset, realloc_and_memmove_ok());
       ++settings.num_buckets;
@@ -1155,7 +1153,7 @@ class sparsegroup {
     assert(settings.num_buckets > 0);
     for (size_type i = offset; i < settings.num_buckets-1; ++i)
       memcpy(group + i, group + i+1, sizeof(*group));  // hopefully inlined!
-    group = settings.realloc_or_die(group, settings.num_buckets-1);
+    group = settings.realloc_or_die(group, settings.num_buckets-1, settings.num_buckets);
   }
 
   // Shrink the array, without any special assumptions about value_type and
@@ -1185,9 +1183,7 @@ class sparsegroup {
         typedef base::integral_constant<bool,
             (base::has_trivial_copy<value_type>::value &&
              base::has_trivial_destructor<value_type>::value &&
-             base::is_same<
-                 allocator_type,
-                 libc_allocator_with_realloc<value_type> >::value)>
+             has_reallocate_method<allocator_type>::value)>
             realloc_and_memmove_ok; // pretend mv(x,y) == "x.~T(); new(x) T(y)"
         erase_aux(offset, realloc_and_memmove_ok());
       }
@@ -1280,49 +1276,7 @@ class sparsegroup {
   bool operator>(const sparsegroup& x) const { return x < *this; }
   bool operator>=(const sparsegroup& x) const { return !(*this < x); }
 
- private:
-  template <class A>
-  class alloc_impl : public A {
-   public:
-    typedef typename A::pointer pointer;
-    typedef typename A::size_type size_type;
-
-    // Convert a normal allocator to one that has realloc_or_die()
-    alloc_impl(const A& a) : A(a) { }
-
-    // realloc_or_die should only be used when using the default
-    // allocator (libc_allocator_with_realloc).
-    pointer realloc_or_die(pointer /*ptr*/, size_type /*n*/) {
-      fprintf(stderr, "realloc_or_die is only supported for "
-                      "libc_allocator_with_realloc\n");
-      exit(1);
-      return NULL;
-    }
-  };
-
-  // A template specialization of alloc_impl for
-  // libc_allocator_with_realloc that can handle realloc_or_die.
-  template <class A>
-  class alloc_impl<libc_allocator_with_realloc<A> >
-      : public libc_allocator_with_realloc<A> {
-   public:
-    typedef typename libc_allocator_with_realloc<A>::pointer pointer;
-    typedef typename libc_allocator_with_realloc<A>::size_type size_type;
-
-    alloc_impl(const libc_allocator_with_realloc<A>& a)
-        : libc_allocator_with_realloc<A>(a) { }
-
-    pointer realloc_or_die(pointer ptr, size_type n) {
-      pointer retval = this->reallocate(ptr, n);
-      if (retval == NULL) {
-        fprintf(stderr, "sparsehash: FATAL ERROR: failed to reallocate "
-                "%lu elements for ptr %p", static_cast<unsigned long>(n), ptr);
-        exit(1);
-      }
-      return retval;
-    }
-  };
-
+  private:
   // Package allocator with num_buckets to eliminate memory needed for the
   // zero-size allocator.
   // If new fields are added to this class, we should add them to
