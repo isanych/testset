@@ -1,5 +1,5 @@
 @echo %DATE% %TIME% Start ============================================================
-@set c=TimeMem TestSet 20000000 hit 1 miss 1
+@set c=TimeMem TestSet 20000000 pop_hit 1 hit 1 miss 1
 %c% unordered
 %c% btree
 %c% sparse
@@ -9,7 +9,7 @@
 %c% huge_forward
 %c% huge_linked
 %c% set
-@set c=TimeMem TestSetAlloc 20000000 hit 1 miss 1
+@set c=TimeMem TestSetAlloc 20000000
 %c% unordered
 %c% btree
 %c% sparse
@@ -19,7 +19,7 @@
 %c% huge_forward
 %c% huge_linked
 %c% set
-@set c=TimeMem TestSetPool 20000000 hit 1 miss 1
+@set c=TimeMem TestSetPool 20000000
 %c% unordered
 %c% btree
 %c% sparse

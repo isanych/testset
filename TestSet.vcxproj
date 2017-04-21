@@ -100,7 +100,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WRAP_ALLOC;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MSVC_COMPILER;WIN32;WRAP_ALLOC;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -133,7 +133,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WRAP_ALLOC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SSE4_2__;MSVC_COMPILER;WIN32;WRAP_ALLOC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -144,12 +144,51 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sdsl-src\bits.cpp" />
+    <ClCompile Include="sdsl-src\bp_support_algorithm.cpp" />
+    <ClCompile Include="sdsl-src\coder_elias_delta.cpp" />
+    <ClCompile Include="sdsl-src\coder_elias_gamma.cpp" />
+    <ClCompile Include="sdsl-src\coder_fibonacci.cpp" />
+    <ClCompile Include="sdsl-src\config.cpp" />
+    <ClCompile Include="sdsl-src\construct_config.cpp" />
+    <ClCompile Include="sdsl-src\construct_isa.cpp" />
+    <ClCompile Include="sdsl-src\construct_lcp.cpp" />
+    <ClCompile Include="sdsl-src\construct_lcp_helper.cpp" />
+    <ClCompile Include="sdsl-src\construct_sa.cpp" />
+    <ClCompile Include="sdsl-src\construct_sa_se.cpp" />
+    <ClCompile Include="sdsl-src\csa_alphabet_strategy.cpp" />
+    <ClCompile Include="sdsl-src\io.cpp" />
+    <ClCompile Include="sdsl-src\lcp_support_tree.cpp" />
+    <ClCompile Include="sdsl-src\louds_tree.cpp" />
+    <ClCompile Include="sdsl-src\memory_management.cpp" />
+    <ClCompile Include="sdsl-src\nn_dict_dynamic.cpp" />
+    <ClCompile Include="sdsl-src\ram_filebuf.cpp" />
+    <ClCompile Include="sdsl-src\ram_fs.cpp" />
+    <ClCompile Include="sdsl-src\rrr_vector_15.cpp" />
+    <ClCompile Include="sdsl-src\sd_vector.cpp" />
+    <ClCompile Include="sdsl-src\sfstream.cpp" />
+    <ClCompile Include="sdsl-src\structure_tree.cpp" />
+    <ClCompile Include="sdsl-src\uint128_t.cpp" />
+    <ClCompile Include="sdsl-src\uint256_t.cpp" />
+    <ClCompile Include="sdsl-src\util.cpp" />
+    <ClCompile Include="sdsl-src\wt_helper.cpp" />
     <ClCompile Include="TestSet.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitset\include\bitset\bitset.h" />
+    <ClInclude Include="bitset\include\bitset\estimate.h" />
+    <ClInclude Include="bitset\include\bitset\malloc.h" />
+    <ClInclude Include="bitset\include\bitset\operation.h" />
+    <ClInclude Include="bitset\include\bitset\vector.h" />
     <ClInclude Include="btree.h" />
     <ClInclude Include="btree_container.h" />
     <ClInclude Include="btree_set.h" />
+    <ClInclude Include="concise.h" />
+    <ClInclude Include="conciseutil.h" />
+    <ClInclude Include="EWAHBoolArray\headers\boolarray.h" />
+    <ClInclude Include="EWAHBoolArray\headers\ewah.h" />
+    <ClInclude Include="EWAHBoolArray\headers\ewahutil.h" />
+    <ClInclude Include="EWAHBoolArray\headers\runninglengthword.h" />
     <ClInclude Include="mct\closed-hash-map.hpp" />
     <ClInclude Include="mct\closed-hash-set.hpp" />
     <ClInclude Include="mct\config.hpp" />
@@ -162,6 +201,115 @@
     <ClInclude Include="mct\impl\serialization.hpp" />
     <ClInclude Include="mct\impl\utils.hpp" />
     <ClInclude Include="mct\intrusiveness.hpp" />
+    <ClInclude Include="sdsl\bits.hpp" />
+    <ClInclude Include="sdsl\bit_vectors.hpp" />
+    <ClInclude Include="sdsl\bit_vector_il.hpp" />
+    <ClInclude Include="sdsl\bp_support.hpp" />
+    <ClInclude Include="sdsl\bp_support_algorithm.hpp" />
+    <ClInclude Include="sdsl\bp_support_g.hpp" />
+    <ClInclude Include="sdsl\bp_support_gg.hpp" />
+    <ClInclude Include="sdsl\bp_support_sada.hpp" />
+    <ClInclude Include="sdsl\coder.hpp" />
+    <ClInclude Include="sdsl\coder_comma.hpp" />
+    <ClInclude Include="sdsl\coder_elias_delta.hpp" />
+    <ClInclude Include="sdsl\coder_elias_gamma.hpp" />
+    <ClInclude Include="sdsl\coder_fibonacci.hpp" />
+    <ClInclude Include="sdsl\config.hpp" />
+    <ClInclude Include="sdsl\construct.hpp" />
+    <ClInclude Include="sdsl\construct_bwt.hpp" />
+    <ClInclude Include="sdsl\construct_config.hpp" />
+    <ClInclude Include="sdsl\construct_isa.hpp" />
+    <ClInclude Include="sdsl\construct_lcp.hpp" />
+    <ClInclude Include="sdsl\construct_lcp_helper.hpp" />
+    <ClInclude Include="sdsl\construct_sa.hpp" />
+    <ClInclude Include="sdsl\construct_sa_se.hpp" />
+    <ClInclude Include="sdsl\csa_alphabet_strategy.hpp" />
+    <ClInclude Include="sdsl\csa_bitcompressed.hpp" />
+    <ClInclude Include="sdsl\csa_sada.hpp" />
+    <ClInclude Include="sdsl\csa_sampling_strategy.hpp" />
+    <ClInclude Include="sdsl\csa_wt.hpp" />
+    <ClInclude Include="sdsl\cst_fully.hpp" />
+    <ClInclude Include="sdsl\cst_iterators.hpp" />
+    <ClInclude Include="sdsl\cst_sada.hpp" />
+    <ClInclude Include="sdsl\cst_sct3.hpp" />
+    <ClInclude Include="sdsl\dac_vector.hpp" />
+    <ClInclude Include="sdsl\enc_vector.hpp" />
+    <ClInclude Include="sdsl\fast_cache.hpp" />
+    <ClInclude Include="sdsl\hyb_vector.hpp" />
+    <ClInclude Include="sdsl\int_vector.hpp" />
+    <ClInclude Include="sdsl\int_vector_buffer.hpp" />
+    <ClInclude Include="sdsl\int_vector_io_wrappers.hpp" />
+    <ClInclude Include="sdsl\int_vector_mapper.hpp" />
+    <ClInclude Include="sdsl\inv_perm_support.hpp" />
+    <ClInclude Include="sdsl\io.hpp" />
+    <ClInclude Include="sdsl\iterators.hpp" />
+    <ClInclude Include="sdsl\k2_treap.hpp" />
+    <ClInclude Include="sdsl\k2_treap_algorithm.hpp" />
+    <ClInclude Include="sdsl\k2_treap_helper.hpp" />
+    <ClInclude Include="sdsl\k2_tree.hpp" />
+    <ClInclude Include="sdsl\k2_tree_helper.hpp" />
+    <ClInclude Include="sdsl\lcp.hpp" />
+    <ClInclude Include="sdsl\lcp_bitcompressed.hpp" />
+    <ClInclude Include="sdsl\lcp_byte.hpp" />
+    <ClInclude Include="sdsl\lcp_dac.hpp" />
+    <ClInclude Include="sdsl\lcp_support_sada.hpp" />
+    <ClInclude Include="sdsl\lcp_support_tree.hpp" />
+    <ClInclude Include="sdsl\lcp_support_tree2.hpp" />
+    <ClInclude Include="sdsl\lcp_vlc.hpp" />
+    <ClInclude Include="sdsl\lcp_wt.hpp" />
+    <ClInclude Include="sdsl\louds_tree.hpp" />
+    <ClInclude Include="sdsl\memory_management.hpp" />
+    <ClInclude Include="sdsl\nearest_neighbour_dictionary.hpp" />
+    <ClInclude Include="sdsl\nn_dict_dynamic.hpp" />
+    <ClInclude Include="sdsl\qsufsort.hpp" />
+    <ClInclude Include="sdsl\ram_filebuf.hpp" />
+    <ClInclude Include="sdsl\ram_fs.hpp" />
+    <ClInclude Include="sdsl\rank_support.hpp" />
+    <ClInclude Include="sdsl\rank_support_scan.hpp" />
+    <ClInclude Include="sdsl\rank_support_v.hpp" />
+    <ClInclude Include="sdsl\rank_support_v5.hpp" />
+    <ClInclude Include="sdsl\raster_img.hpp" />
+    <ClInclude Include="sdsl\rmq_succinct_sada.hpp" />
+    <ClInclude Include="sdsl\rmq_succinct_sct.hpp" />
+    <ClInclude Include="sdsl\rmq_support.hpp" />
+    <ClInclude Include="sdsl\rmq_support_sparse_table.hpp" />
+    <ClInclude Include="sdsl\rrr_helper.hpp" />
+    <ClInclude Include="sdsl\rrr_vector.hpp" />
+    <ClInclude Include="sdsl\rrr_vector_15.hpp" />
+    <ClInclude Include="sdsl\sdsl_concepts.hpp" />
+    <ClInclude Include="sdsl\sd_vector.hpp" />
+    <ClInclude Include="sdsl\select_support.hpp" />
+    <ClInclude Include="sdsl\select_support_mcl.hpp" />
+    <ClInclude Include="sdsl\select_support_scan.hpp" />
+    <ClInclude Include="sdsl\sfstream.hpp" />
+    <ClInclude Include="sdsl\sorted_int_stack.hpp" />
+    <ClInclude Include="sdsl\sorted_multi_stack_support.hpp" />
+    <ClInclude Include="sdsl\sorted_stack_support.hpp" />
+    <ClInclude Include="sdsl\structure_tree.hpp" />
+    <ClInclude Include="sdsl\suffix_arrays.hpp" />
+    <ClInclude Include="sdsl\suffix_array_algorithm.hpp" />
+    <ClInclude Include="sdsl\suffix_array_helper.hpp" />
+    <ClInclude Include="sdsl\suffix_trees.hpp" />
+    <ClInclude Include="sdsl\suffix_tree_algorithm.hpp" />
+    <ClInclude Include="sdsl\suffix_tree_helper.hpp" />
+    <ClInclude Include="sdsl\uint128_t.hpp" />
+    <ClInclude Include="sdsl\uint256_t.hpp" />
+    <ClInclude Include="sdsl\uintx_t.hpp" />
+    <ClInclude Include="sdsl\util.hpp" />
+    <ClInclude Include="sdsl\vectors.hpp" />
+    <ClInclude Include="sdsl\vlc_vector.hpp" />
+    <ClInclude Include="sdsl\wavelet_trees.hpp" />
+    <ClInclude Include="sdsl\wm_int.hpp" />
+    <ClInclude Include="sdsl\wt_algorithm.hpp" />
+    <ClInclude Include="sdsl\wt_ap.hpp" />
+    <ClInclude Include="sdsl\wt_blcd.hpp" />
+    <ClInclude Include="sdsl\wt_gmr.hpp" />
+    <ClInclude Include="sdsl\wt_helper.hpp" />
+    <ClInclude Include="sdsl\wt_huff.hpp" />
+    <ClInclude Include="sdsl\wt_hutu.hpp" />
+    <ClInclude Include="sdsl\wt_int.hpp" />
+    <ClInclude Include="sdsl\wt_pc.hpp" />
+    <ClInclude Include="sdsl\wt_rlmn.hpp" />
     <ClInclude Include="sparsehash\internal\densehashtable.h" />
     <ClInclude Include="sparsehash\internal\hashtable-common.h" />
     <ClInclude Include="sparsehash\internal\libc_allocator_with_realloc.h" />
@@ -186,6 +334,9 @@
     <ClInclude Include="sparsehash\sparse_hash_set">
       <FileType>CppHeader</FileType>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bitscan\biicode.conf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
