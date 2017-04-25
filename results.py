@@ -46,15 +46,16 @@ class Test:
     def __str__(self):
         l = list()
         l.append(self.name)
-        l.append(str(self.alloc))
-        l.append(str(self.free))
-        l.append(str(self.grow))
-        l.append(str(self.shrink))
         l.append(str_or_empty(self.population))
         l.append(str_or_empty(self.population_hit))
         l.append(str_or_empty(self.hit))
         l.append(str_or_empty(self.miss))
         l.append(str_or_empty(self.working_set))
+        l.append("")
+        l.append(str(self.alloc))
+        l.append(str(self.free))
+        l.append(str(self.grow))
+        l.append(str(self.shrink))
         return ",".join(l)
 
 

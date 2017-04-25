@@ -101,7 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>MSVC_COMPILER;WIN32;WRAP_ALLOC;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\software\2015x64\boost\1.60.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -317,6 +317,17 @@
     <ClInclude Include="sparsehash\internal\sparsehashtable.h" />
     <ClInclude Include="sparsehash\template_util.h" />
     <ClInclude Include="sparsehash\type_traits.h" />
+    <ClInclude Include="sparsepp\spp.h" />
+    <ClInclude Include="sparsepp\spp_alloc.h" />
+    <ClInclude Include="sparsepp\spp_bitset.h" />
+    <ClInclude Include="sparsepp\spp_btree.h" />
+    <ClInclude Include="sparsepp\spp_config.h" />
+    <ClInclude Include="sparsepp\spp_memory.h" />
+    <ClInclude Include="sparsepp\spp_smartptr.h" />
+    <ClInclude Include="sparsepp\spp_stdint.h" />
+    <ClInclude Include="sparsepp\spp_timer.h" />
+    <ClInclude Include="sparsepp\spp_traits.h" />
+    <ClInclude Include="sparsepp\spp_utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sparsehash\dense_hash_map">

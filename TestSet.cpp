@@ -100,6 +100,9 @@ int32_t inline __builtin_popcountll(uint64_t value)
 #include "ewah.h"
 #include "sparse_sets.h"
 #include "concise.h"
+#include <sparsepp/spp.h>
+#include <boost/unordered_set.hpp>
+#include <boost/container/flat_set.hpp>
 
 #ifdef _DEBUG
 const auto amount = 100000;
@@ -318,15 +321,20 @@ constexpr bool operator!=(const Reallocator<T>&, const Reallocator<T>&) noexcept
 
 template <class T>
 using PoolAllocator = Reallocator<T>;
+template <class T>
+using SppAllocator = Reallocator<T>;
 
 #else
 template <class T>
 using Reallocator = google::libc_allocator_with_realloc<T>;
 template <class T>
 using PoolAllocator = std::allocator<T>;
+template <class T>
+using SppAllocator = SPP_DEFAULT_ALLOCATOR<T>;
 #endif
 
 typedef google::dense_hash_set<test_t, std::hash<test_t>, std::equal_to<test_t>, Reallocator<test_t>> Dense;
+typedef boost::container::flat_set<test_t, std::less<test_t>, PoolAllocator<test_t>> Flat;
 
 size_t populate_count = amount;
 size_t pop_hit_count = 0;
@@ -351,7 +359,7 @@ void init_set(sdsl::bit_vector& s)
 template<typename T>
 void elapsed(const char* name, T end, T start)
 {
-  std::cout << name << ", sec: " << std::fixed << std::setprecision(2) <<
+  std::cout << name << ", sec: " << std::fixed << std::setprecision(3) <<
     std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << std::endl;
 }
 
@@ -550,6 +558,9 @@ int main(int argc, char** argv)
     option _sparse_set = { "ss", "sparse_set" };
     option _unordered_sparse_set = { "uss", "unordered_sparse_set" };
     option concise_set = { "cs", "concise_set" };
+    option spp = { "spp", "spp::sparse_hash_set" };
+    option boost_unordered = { "bu", "boost::unordered_set" };
+    option flat_set = { "fs", "flat_set", "boost::flat_set" };
     if (argc == 1)
     {
       std::cout << "Usage: test [<cnt>] [hit <multiplier>] [miss <multiplier>] <type> " << std::endl;
@@ -568,6 +579,9 @@ int main(int argc, char** argv)
       _sparse_set.help();
       _unordered_sparse_set.help();
       concise_set.help();
+      spp.help();
+      boost_unordered.help();
+      flat_set.help();
       std::cout << " cnt - number of values in set, default: " << amount << std::endl;
       std::cout << " pop_hit cnt  - number of population hit steps, default: 0" << std::endl;
       std::cout << " hit cnt  - number of hit steps, default: 0" << std::endl;
@@ -639,6 +653,18 @@ int main(int argc, char** argv)
       else if (concise_set.contains(s))
       {
         test<ConciseSet<>>();
+      }
+      else if (spp.contains(s))
+      {
+        test<spp::sparse_hash_set<test_t, spp::spp_hash<test_t>, std::equal_to<test_t>, SppAllocator<test_t>>>();
+      }
+      else if (boost_unordered.contains(s))
+      {
+        test<boost::unordered_set<test_t, boost::hash<test_t>, std::equal_to<test_t>, PoolAllocator<test_t>>>();
+      }
+      else if (flat_set.contains(s))
+      {
+        test<Flat>();
       }
       else if (s == "pop_hit")
       {
